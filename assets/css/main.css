@@ -1,110 +1,95 @@
-body
-{
-    font-size: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2.5em;
-    color: white;
-    background-color: rgb(95, 95, 95);
+body {
+  font-size: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5em;
+  color: white;
+  background-color: rgb(95, 95, 95);
 }
 
-.top
-{
-    font-size: 3rem;
+.top {
+  font-size: 3rem;
 }
 
-.data
-{
-    font-size: 2rem;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: .5em;
+.data {
+  font-size: 2rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+}
+.data ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.data ul.right {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  margin-left: 2em;
+  width: 2em;
+}
+.data ul.units {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
-ul
-{
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 3em;
+  justify-content: center;
 }
 
-ul.right
-{
-    display: flex;
-    flex-direction: column;
-    align-items: end;
-    margin-left: 2em;
-    width: 2em;
+button {
+  font-family: inherit;
+  color: inherit;
+  font-size: 2rem;
+  border: 0.1em solid;
+  background-color: transparent;
+  width: 4em;
+  border-radius: 0.2em;
+  transition: box-shadow 300ms ease, background-color 300ms ease, color 300ms ease;
+}
+button:hover {
+  cursor: pointer;
+}
+button.clicked {
+  box-shadow: 0 0 0.1em 0.2em rgb(250, 250, 250);
+  color: black;
+  background-color: rgb(250, 250, 250);
+}
+button#on, button#set {
+  border-color: rgb(31, 242, 31);
+}
+button#off, button#reset {
+  border-color: rgb(242, 25, 25);
 }
 
-ul.units
-{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+.energy {
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
 }
-
-.buttons
-{
-    display: flex;
-    flex-direction: row;
-    gap: 3em;
-    justify-content: center;
+.energy input {
+  font-size: 1.25rem;
+  background: none;
+  color: white;
+  border: 0.1em solid white;
+  padding: 0.5em;
 }
-
-button
-{
-    font-family: inherit;
-    color: inherit;
-    font-size: 2rem;
-    border: .1em solid;
-    background-color: transparent;
-    width: 4em;
-    border-radius: .2em;
-    transition:
-        box-shadow 300ms ease,
-        background-color 300ms ease,
-        color 300ms ease;
+.energy input:focus {
+  outline: none;
 }
-
-#on, #set { border-color: rgb(31, 242, 31); }
-#off, #reset { border-color: rgb(242, 25, 25); }
-
-button:hover
-{
-    cursor: pointer;
-    /* box-shadow: 0 0 .1em .2em rgb(250, 250, 250);
-    color: black;
-    background-color: rgb(250, 250, 250); */
+.energy #message {
+  display: flex;
+  justify-content: center;
+  visibility: hidden;
 }
-
-button.clicked
-{
-    box-shadow: 0 0 .1em .2em rgb(250, 250, 250);
-    color: black;
-    background-color: rgb(250, 250, 250);
-}
-
-.energy
-{
-    display: flex;
-    flex-direction: column;
-    gap: 2em;
-}
-
-input
-{
-    font-size: 1.25rem;
-    background: none;
-    color: white;
-    border: .1em solid white;
-    padding: .5em;
-}
-
-input:focus
-{
-    outline: none;
+.energy #message.visible {
+  visibility: visible;
 }
