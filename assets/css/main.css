@@ -13,7 +13,7 @@ body {
 }
 
 .data {
-  font-size: 2rem;
+  font-size: 1.75rem;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -73,10 +73,12 @@ button#off, button#reset {
 .energy {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 2em;
 }
 .energy input {
   font-size: 1.25rem;
+  width: 50%;
   background: none;
   color: white;
   border: 0.1em solid white;
@@ -85,11 +87,12 @@ button#off, button#reset {
 .energy input:focus {
   outline: none;
 }
-.energy #message {
+
+#message {
   display: flex;
   justify-content: center;
   visibility: hidden;
 }
-.energy #message.visible {
+#message.visible {
   visibility: visible;
 }

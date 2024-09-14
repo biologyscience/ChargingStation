@@ -52,4 +52,11 @@ SET.addEventListener('click', () =>
 {
     energyLimit = parseInt(input.value);
     document.getElementById('on').click();
+
+    const message = document.getElementById('message');
+
+    message.innerHTML = `Supply will cut-off after reaching ${energyLimit} kWh`;
+
+    message.classList.add('visible');
+    setTimeout(() => { message.classList.remove('visible') }, 3000);
 });
