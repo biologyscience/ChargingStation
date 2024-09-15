@@ -12,6 +12,8 @@ let energyLimit = 0;
 
 input.value = energyLimit;
 
+let state = false;
+
 function ONOFF({target})
 {
     const ID = target.id;
@@ -40,7 +42,11 @@ function getData()
         POWER.innerHTML = power.toFixed(2);
         ENERGY.innerHTML = energy.toFixed(2);
 
-        if ((energy >= energyLimit) && (energyLimit !== 0)) document.getElementById('off').click();
+        if ((energy >= energyLimit) && (energyLimit !== 0) && (state === true))
+        {
+            document.getElementById('off').click();
+            state = false;
+        }
         
     }).catch(console.error);
 };
@@ -52,6 +58,7 @@ SET.addEventListener('click', () =>
 {
     energyLimit = parseInt(input.value);
     document.getElementById('on').click();
+    state = true;
 
     const message = document.getElementById('message');
 
