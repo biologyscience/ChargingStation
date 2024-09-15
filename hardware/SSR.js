@@ -11,7 +11,7 @@ function resetGPIO()
 
 function toggleSSR(state)
 {
-    pin.writeSync(state * 1);
+    pin.writeSync(state);
 };
 
 module.exports = { resetGPIO, toggleSSR };
