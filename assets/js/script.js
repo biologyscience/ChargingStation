@@ -10,6 +10,8 @@ const
 
 let energyLimit = 0;
 
+let energy = 0;
+
 input.value = energyLimit;
 
 let state = false;
@@ -33,22 +35,34 @@ function ONOFF({target})
 
 function getData()
 {
-    fetch('/api/getData', { method: 'GET' }).then(x => x.json()).then((data) =>
-    {
-        const { voltage, current, power, energy } = data;
+    // fetch('/api/getData', { method: 'GET' }).then(x => x.json()).then((data) =>
+    // {
+    //     const { voltage, current, power, energy } = data;
 
-        VOLTAGE.innerHTML = voltage.toFixed(2);
-        CURRENT.innerHTML = current.toFixed(2);
-        POWER.innerHTML = power.toFixed(2);
-        ENERGY.innerHTML = energy.toFixed(2);
+    //     VOLTAGE.innerHTML = voltage.toFixed(2);
+    //     CURRENT.innerHTML = current.toFixed(2);
+    //     POWER.innerHTML = power.toFixed(2);
+    //     ENERGY.innerHTML = energy.toFixed(2);
 
-        if ((energy >= energyLimit) && (energyLimit !== 0) && (state === true))
-        {
-            document.getElementById('off').click();
-            state = false;
-        }
+    //     if ((energy >= energyLimit) && (energyLimit !== 0) && (state === true))
+    //     {
+    //         document.getElementById('off').click();
+    //         state = false;
+    //     }
         
-    }).catch(console.error);
+    // }).catch(console.error);
+
+    if ((energy >= energyLimit) && (energyLimit !== 0) && (state === true))
+    {
+        document.getElementById('off').click();
+        state = false;
+    }
+
+    if (state === false) return;
+
+    energy++;
+
+    ENERGY.innerHTML = energy;
 };
 
 getData();
