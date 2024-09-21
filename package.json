@@ -12,9 +12,10 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "crc": "^4.3.2",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
-    "modbus-serial": "^8.0.17",
-    "onoff": "^6.0.3"
+    "onoff": "^6.0.3",
+    "serialport": "^12.0.0"
   }
 }
