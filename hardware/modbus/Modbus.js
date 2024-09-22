@@ -28,9 +28,9 @@ class Modbus
 
             const response = this.#decodeResponse(responseBuffer);
 
-            const toPush = { request: this.#requestToSend, response };
+            const toPush = { request: this.#decodeRequest(this.#requestToSend), response };
 
-            if (response.crc !== response.crcCalculated) toPush.reason = 'CRC Error';
+            if (response.crc !== response.crcCalculated) toPush.comment = 'CRC Error';
 
             this.#responses.push(toPush);
         });
@@ -76,15 +76,15 @@ class Modbus
         while (this.#requests.length !== 0)
         {
             this.#requestToSend = this.#requests.reverse().pop();
-        
-            this.serialPort.write(this.#requestToSend, 'HEX');
-        
+            
             this.#requests.reverse();
-        
+
+            this.serialPort.write(this.#requestToSend, 'HEX');
+
             await wait(this.timeout);
         
             if (this.#recieved) this.#recieved = false;
-            else this.#responses.push({request: this.#requestToSend, response: null, reason: 'Device did not reply'});
+            else this.#responses.push({request: this.#decodeRequest(this.#requestToSend), response: null, comment: 'Device did not reply'});
         };
         
         const copyResponses = [...this.#responses];
@@ -94,12 +94,24 @@ class Modbus
         return copyResponses; 
     };
 
-    #decodeResponse(bufferData)
+    #decodeRequest(request)
     {
         const
-            slaveID = bufferData.subarray(0, 1).readUInt8(),
-            fc = bufferData.subarray(1, 2).readUInt8(),
-            totalDataBytes = bufferData.subarray(2, 3).readUInt8();
+            slaveID = request.subarray(0, 1).readUInt8(),
+            fc = request.subarray(1, 2).readUInt8(),
+            rawAddress = request.subarray(2, 4).readUInt16BE() + 40001,
+            quantity = request.subarray(4, 6).readUInt16BE(),
+            crc = request.subarray(6, 8).readUInt16LE();
+
+        return { slaveID, fc, rawAddress, quantity, crc, raw: request };
+    };    
+
+    #decodeResponse(response)
+    {
+        const
+            slaveID = response.subarray(0, 1).readUInt8(),
+            fc = response.subarray(1, 2).readUInt8(),
+            totalDataBytes = response.subarray(2, 3).readUInt8();
     
         let i = 3 + totalDataBytes;
 
@@ -107,7 +119,7 @@ class Modbus
 
         while (i > 3)
         {
-            reorder.push(bufferData.subarray(i - 2, i));
+            reorder.push(response.subarray(i - 2, i));
 
             i -= 2;
         }
@@ -120,10 +132,10 @@ class Modbus
 
         const
             crcOffset = 3 + totalDataBytes,
-            crc = bufferData.subarray(crcOffset, crcOffset + 2).readUInt16LE(),
-            crcCalculated = crc16modbus(bufferData.subarray(0, -2));
+            crc = response.subarray(crcOffset, crcOffset + 2).readUInt16LE(),
+            crcCalculated = crc16modbus(response.subarray(0, -2));
 
-        return { slaveID, fc, totalDataBytes, value, crc, crcCalculated }; 
+        return { slaveID, fc, totalDataBytes, value, crc, crcCalculated, raw: response }; 
     };
 
     #portOpened()
