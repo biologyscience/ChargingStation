@@ -9,16 +9,14 @@ class Modbus
     #recieved = false;
     #requestToSend = undefined;
 
-    constructor(path, baudRate, slaveID, timeout)
+    constructor({ path, baudRate, timeout })
     {
-        this.slaveID = slaveID;
-        this.timeout = timeout;
-
         this.serialPort = new SerialPort({ path, baudRate, autoOpen: false });
+        this.timeout = timeout;
 
         this.serialPort.on('open', () => console.log('opened'));
         this.serialPort.on('close', () => console.log('closed'));
-        this.serialPort.on('error', console.log);
+        // this.serialPort.on('error', console.log);
 
         this.serialPort.on('data', (responseBuffer) =>
         {
@@ -37,11 +35,11 @@ class Modbus
     }
 
     // FC 03 ONLY - READ HOLDING REGISTERS
-    setRequest(rawAddress, quantity)
+    setRequest(slaveID, rawAddress, quantity)
     {
         const buffs =
         {
-            slave: Buffer.from([this.slaveID], 'HEX'),
+            slave: Buffer.from([slaveID], 'HEX'),
             fc: Buffer.from([3], 'HEX'),
             address: Buffer.from((rawAddress - 40001).toString(16).padStart(4, '0'), 'HEX'),
             quantity: Buffer.from((quantity).toString(16).padStart(4, '0'), 'HEX')
@@ -60,7 +58,7 @@ class Modbus
 
     setRequests(array)
     {
-        array.forEach(x => this.setRequest(x[0], x[1]));
+        array.forEach(x => this.setRequest(x[0], x[1], x[2]));
 
         return this;
     };
