@@ -158,16 +158,7 @@ class Modbus
     {
         if (array.length === 0) return console.warn('No requests are provided');
 
-        if (this.#lineBusy)
-        {
-            console.log('line busy');
-
-            await this.#lineFree();
-
-            console.log('line free');
-
-            return;
-        }
+        if (this.#lineBusy) await this.#lineFree();
 
         this.#lineBusy = true;
 
@@ -194,7 +185,7 @@ class Modbus
         const copyResponses = [...this.#responses];
         
         this.serialPort.close();
-        
+
         return copyResponses;
     };
 };

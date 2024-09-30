@@ -1,37 +1,21 @@
-const { default: ModbusRTU } = require('modbus-serial');
+const { Modbusv2 } = require('./modbus/Modbusv2');
 
-const slave = new ModbusRTU();
+Modbusv2.init({ path: '/dev/ttyAMA0', baudRate: 9600, timeout: 50 });
 
-slave.setTimeout(2000);
-
-function getData(slaveID, addresses)
+/**
+ * @param {Array<[slaveID, rawAddress, quantity]>} xyz 
+ * quantity defaults to 2, if given undefined
+ * @returns 
+ */
+function getData(xyz)
 {
     return new Promise((resolve, reject) =>
     {
-        slave.connectRTUBuffered('/dev/ttyAMA0', { baudRate: 9600, parity: 'even' })
-        .then(() =>
-        {
-            slave.setID(slaveID);
+        const data = [];
 
-            const toResolve = [];
-    
-            addresses.forEach(x => toResolve.push(slave.readHoldingRegisters(x - 40001)));
-    
-            Promise.all(toResolve)
-            .then((values) =>
-            {
-                const toSend = { slaveID };
-    
-                for (let i = 0; i < addresses.length; i++)
-                {
-                    toSend[addresses[i]] = values[i].data.join('');
-                }
-    
-                resolve(toSend);
+        Modbusv2.getResponses(xyz).then(x => data.push(x.response.value));
 
-            }).catch(reject);
-
-        }).catch(reject);
+        resolve(data);
     });
 };
 
