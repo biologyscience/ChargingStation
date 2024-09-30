@@ -1,7 +1,9 @@
 const express = require('express');
 
 const { toggleSSR } = require('../hardware/SSR');
-const getData = require('../hardware/getData');
+const { Modbusv2 } = require('../hardware/modbus/Modbusv2');
+
+Modbusv2.init({ path: '/dev/ttyAMA0', baudRate: 9600, timeout: 50 });
 
 const api = express.Router();
 
@@ -16,39 +18,21 @@ api.put('/onoff', (request, response) =>
 
 api.get('/getData', (request, response) =>
 {
-    /*
-    const slaveID = 5;
+    const { requestDataArray } = request.body;
 
-    const
-        voltageAD = 43927,
-        currentAD = 43929,
-        powerAD = 43919,
-        energyAD = 43961;
-
-    getData(slaveID, [voltageAD, currentAD, powerAD, energyAD])
-    .then((data) =>
+    Modbusv2.getResponses(requestDataArray).then((responses) =>
     {
-        console.log(data);
+        const result = {};
 
-        const values =
+        responses.forEach((x) =>
         {
-            voltage: data[voltageAD],
-            current: data[currentAD],
-            power: data[powerAD],
-            energy: data[energyAD]
-        };
+            if (result[`slave${x.request.slaveID}`] === undefined) result[`slave${x.request.slaveID}`] = {};
 
-        response.json(values);
-    })
-    .catch(console.log);
-    */
+            result[`slave${x.request.slaveID}`][x.request.rawAddress] = x.response;
+        });
 
-    const voltage = Math.random() * 30;
-    const current = Math.random() * 30;
-    const power = voltage * current;
-    const energy = power * 1.21;
-
-    response.json({voltage, current, power, energy});
+        response.json(result);
+    });
 });
 
 module.exports = api;
