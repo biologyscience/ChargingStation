@@ -16,23 +16,26 @@ api.put('/onoff', (request, response) =>
     response.sendStatus(200);
 });
 
-api.get('/getData', (request, response) =>
+api.post('/getData', (request, response) =>
 {
     const { requestDataArray } = request.body;
 
-    Modbusv2.getResponses(requestDataArray).then((responses) =>
-    {
-        const result = {};
+    const result = { error: null };
 
+    Modbusv2.getResponses(requestDataArray)
+    .then((responses) =>
+    {
         responses.forEach((x) =>
         {
             if (result[`slave${x.request.slaveID}`] === undefined) result[`slave${x.request.slaveID}`] = {};
 
-            result[`slave${x.request.slaveID}`][x.request.rawAddress] = x.response;
-        });
+            value = x.response === null ? x.comment : x.response.value;
 
-        response.json(result);
-    });
+            result[`slave${x.request.slaveID}`][x.request.rawAddress] = value;
+        });
+    })
+    .catch(x => result.error = x.message)
+    .finally(() => response.json(result));
 });
 
 module.exports = api;

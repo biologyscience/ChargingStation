@@ -35,38 +35,39 @@ function ONOFF({target})
 
 function getData()
 {
-    // fetch('/api/getData', { method: 'GET' }).then(x => x.json()).then((data) =>
-    // {
-    //     const { voltage, current, power, energy } = data;
+    const
+        slaveID = 6,
+        voltageAD = 40143,
+        currentAD = 40151,
+        powerAD = 40103,
+        energyAD = 40159;
 
-    //     VOLTAGE.innerHTML = voltage.toFixed(2);
-    //     CURRENT.innerHTML = current.toFixed(2);
-    //     POWER.innerHTML = power.toFixed(2);
-    //     ENERGY.innerHTML = energy.toFixed(2);
+    // const requestDataArray = [];
+    const requestDataArray = [ [slaveID, voltageAD], [slaveID, currentAD], [slaveID, powerAD], [slaveID, energyAD] ];
 
-    //     if ((energy >= energyLimit) && (energyLimit !== 0) && (state === true))
-    //     {
-    //         document.getElementById('off').click();
-    //         state = false;
-    //     }
-        
-    // }).catch(console.error);
-
-    if ((energy >= energyLimit) && (energyLimit !== 0) && (state === true))
+    fetch('/api/getData', { method: 'POST', body: JSON.stringify({requestDataArray}), headers: {'content-type': 'application/json'} })
+    .then(x => x.json()).then((data) =>
     {
-        document.getElementById('off').click();
-        state = false;
-    }
+        if (data.error !== null) return console.log(data.error);
 
-    if (state === false) return;
+        const slave = data[`slave${slaveID}`];
 
-    energy++;
+        VOLTAGE.innerHTML = slave[voltageAD].toFixed(2);
+        CURRENT.innerHTML = slave[currentAD].toFixed(2);
+        POWER.innerHTML = slave[powerAD].toFixed(2);
+        ENERGY.innerHTML = slave[energyAD].toFixed(2);
 
-    ENERGY.innerHTML = energy;
+        energy = slave[energyAD].toFixed(2);
+
+        if ((energy >= energyLimit) && (energyLimit !== 0) && (state === true))
+        {
+            document.getElementById('off').click();
+            state = false;
+        }
+    });
 };
 
-getData();
-setInterval(getData, 1000);
+setInterval(getData, 2000);
 
 SET.addEventListener('click', () =>
 {

@@ -156,7 +156,7 @@ class Modbus
      */
     async getResponses(array)
     {
-        if (array === undefined || array.length === 0) return console.error('No requests are provided');
+        if (array === undefined || array.length === 0) throw new Error('No requests are provided');
 
         if (this.#lineBusy) await this.#lineFree();
 
